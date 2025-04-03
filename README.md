@@ -23,13 +23,6 @@ You can use it with tools like Copilot Agent or any MCP-compatible client.
 - Node.js installed
 - VSCode with an MCP-compatible extension (e.g., Copilot Agent)
 
-- clone repository
-- command
-```
-npm install @modelcontextprotocol/sdk zod
-npm install -D @types/node typescript
-npm run build
-```
 ### Configure in `settings.json`
 
 In your VSCode `settings.json`, add the following:
@@ -38,10 +31,8 @@ In your VSCode `settings.json`, add the following:
 "mcp": {
   "servers": {
     "mcp-gh-pr-mini": {
-      "command": "node",
-      "args": [
-        "/path/to/mcp-gh-pr-mini/build/index.js"
-      ],
+      "command": "npx",
+      "args": ["mcp-gh-pr-mini"],
       "env": {
         "GITHUB_PERSONAL_ACCESS_TOKEN": "{Your Fine-Grained GitHub Token}"
       }
