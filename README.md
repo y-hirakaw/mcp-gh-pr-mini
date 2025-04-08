@@ -12,8 +12,12 @@ This tool allows you to create, list, view diffs, request reviewers, and comment
 - Request reviewers for a pull request
 - Add a comment to a pull request
   - Comments are automatically prefixed with "[AI] Generated using MCP" for clear identification
-  - Supports both general PR comments and line-specific code review comments
+  - Supports both general PR comments and position-specific code review comments
 - Get comments from a pull request
+- Get file changes with comment positions
+  - Retrieves detailed information about changed files
+  - Provides positions for adding review comments
+  - Shows additions, deletions, and patch information for each file
 
 ## 🛠️ Setup
 

@@ -1,6 +1,6 @@
 {
   "name": "mcp-gh-pr-mini",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "A minimal MCP server for GitHub pull requests",
   "main": "./uild/index.js",
   "type": "module",

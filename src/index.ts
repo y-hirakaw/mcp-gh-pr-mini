@@ -95,6 +95,7 @@ interface PullRequest {
   head: {
     ref: string;
     label: string;
+    sha: string;
   };
   base: {
     ref: string;
@@ -124,6 +125,25 @@ interface PullRequestReviewComment {
   path: string; // ファイルパス
   position: number | null; // 行番号またはnull
   commit_id: string;
+}
+
+interface PullRequestFile {
+  filename: string;
+  status: string;
+  additions: number;
+  deletions: number;
+  changes: number;
+  patch?: string;
+}
+
+interface FileChangeInfo {
+  filename: string;
+  status: string;
+  additions: number;
+  deletions: number;
+  changes: number;
+  patch?: string;
+  positions: number[];
 }
 
 // Register GitHub tools
@@ -403,9 +423,9 @@ server.tool(
     pr_number: z.number().describe("Pull request number"),
     body: z.string().describe("Comment content"),
     path: z.string().describe("The relative path to the file to comment on"),
-    line: z.number().describe("The line number in the file to comment on")
+    position: z.number().describe("The position in the diff where you want to add a comment")
   },
-  async ({ owner, repo, pr_number, body, path, line }) => {
+  async ({ owner, repo, pr_number, body, path, position }) => {
     try {
       const prUrl = `${GITHUB_API_BASE}/repos/${owner}/${repo}/pulls/${pr_number}`;
       const prData = await githubRequest<PullRequest>(prUrl);
@@ -418,8 +438,7 @@ server.tool(
           body: AI_COMMENT_IDENTIFIER + body,
           commit_id,
           path,
-          line,
-          side: "RIGHT"  // RIGHTは新しいファイルを指します
+          position
         }
       });
 
@@ -427,7 +446,7 @@ server.tool(
         content: [
           {
             type: "text",
-            text: `Review comment added successfully to PR #${pr_number}\nFile: ${path} (line ${line})\nComment URL: ${commentData.html_url}`,
+            text: `Review comment added successfully to PR #${pr_number}\nFile: ${path} (position ${position})\nComment URL: ${commentData.html_url}`,
           },
         ],
       };
@@ -522,6 +541,78 @@ server.tool(
           {
             type: "text",
             text: `Failed to retrieve pull request comments: ${error instanceof Error ? error.message : String(error)}`,
+          },
+        ],
+      };
+    }
+  }
+);
+
+server.tool(
+  "get_pr_changes_for_commenting",
+  "Get file changes from a GitHub pull request with positions for commenting（GitHubのプルリクエストのファイル変更とコメント可能な位置を取得する）",
+  {
+    owner: z.string().describe("Repository owner (username or organization)"),
+    repo: z.string().describe("Repository name"),
+    pr_number: z.number().describe("Pull request number")
+  },
+  async ({ owner, repo, pr_number }) => {
+    try {
+      const url = `${GITHUB_API_BASE}/repos/${owner}/${repo}/pulls/${pr_number}/files`;
+      const files = await githubRequest<PullRequestFile[]>(url);
+
+      const fileChanges: FileChangeInfo[] = files.map(file => {
+        const positions: number[] = [];
+        if (file.patch) {
+          let position = 0;
+          const lines = file.patch.split('\n');
+          
+          for (const line of lines) {
+            position++;
+            // 追加された行（+で始まる行）の位置を記録
+            if (line.startsWith('+') && !line.startsWith('+++')) {
+              positions.push(position);
+            }
+          }
+        }
+
+        return {
+          filename: file.filename,
+          status: file.status,
+          additions: file.additions,
+          deletions: file.deletions,
+          changes: file.changes,
+          patch: file.patch,
+          positions
+        };
+      });
+
+      const formattedOutput = fileChanges.map(file => {
+        return [
+          `File: ${file.filename}`,
+          `Status: ${file.status}`,
+          `Changes: +${file.additions}/-${file.deletions} (total: ${file.changes})`,
+          `Comment Positions: ${file.positions.join(', ')}`,
+          file.patch ? `\nPatch:\n${file.patch}` : '',
+          '---'
+        ].join('\n');
+      }).join('\n\n');
+
+      return {
+        content: [
+          {
+            type: "text",
+            text: `Changes in PR #${pr_number}:\n\n${formattedOutput}`,
+          },
+        ],
+      };
+    } catch (error) {
+      console.error("Error retrieving PR changes:", error);
+      return {
+        content: [
+          {
+            type: "text",
+            text: `Failed to retrieve pull request changes: ${error instanceof Error ? error.message : String(error)}`,
           },
         ],
       };
