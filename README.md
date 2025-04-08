@@ -11,6 +11,8 @@ This tool allows you to create, list, view diffs, request reviewers, and comment
 - Get the diff for a pull request
 - Request reviewers for a pull request
 - Add a comment to a pull request
+  - Comments are automatically prefixed with "[AI] Generated using MCP" for clear identification
+  - Supports both general PR comments and line-specific code review comments
 - Get comments from a pull request
 
 ## 🛠️ Setup
@@ -51,10 +53,10 @@ with the following permissions:
 
 ## 🤔 Why?
 
-The official GitHub MCP plugin requires a Classic token with full repo access, which is too permissive for many use cases.
-This project is a safer, minimal alternative focused only on essential pull request tasks.
+This project provides a minimal, focused implementation for essential pull request tasks via MCP.
+It's designed to be simple and easy to understand, making it a good reference for building MCP servers.
 
 ## 🙏 Note
 
-I’m still new to building MCP servers, so there may be areas that can be improved.
+I'm still new to building MCP servers, so there may be areas that can be improved.
 Feedback, suggestions, and contributions are always welcome!
