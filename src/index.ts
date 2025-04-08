@@ -402,12 +402,15 @@ server.tool(
     repo: z.string().describe("Repository name"),
     pr_number: z.number().describe("Pull request number"),
     body: z.string().describe("Comment content"),
-    commit_id: z.string().describe("The SHA of the commit to comment on"),
     path: z.string().describe("The relative path to the file to comment on"),
     line: z.number().describe("The line number in the file to comment on")
   },
-  async ({ owner, repo, pr_number, body, commit_id, path, line }) => {
+  async ({ owner, repo, pr_number, body, path, line }) => {
     try {
+      const prUrl = `${GITHUB_API_BASE}/repos/${owner}/${repo}/pulls/${pr_number}`;
+      const prData = await githubRequest<PullRequest>(prUrl);
+      const commit_id = prData.head.sha;
+
       const url = `${GITHUB_API_BASE}/repos/${owner}/${repo}/pulls/${pr_number}/comments`;
       const commentData = await githubRequest<PullRequestReviewComment>(url, {
         method: "POST",
@@ -416,7 +419,7 @@ server.tool(
           commit_id,
           path,
           line,
-          side: "RIGHT"  // RIGHTは新しいファイルの方を指します
+          side: "RIGHT"  // RIGHTは新しいファイルを指します
         }
       });
 
