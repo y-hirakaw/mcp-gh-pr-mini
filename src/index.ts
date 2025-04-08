@@ -5,6 +5,7 @@ import { z } from "zod";
 
 const GITHUB_API_BASE = "https://api.github.com";
 const USER_AGENT = "mcp-gh-pr-mini/1.0";
+const AI_COMMENT_IDENTIFIER = "[AI] Generated using MCP\n\n";
 
 interface RequestOptions {
   method?: string;
@@ -368,7 +369,7 @@ server.tool(
       const url = `${GITHUB_API_BASE}/repos/${owner}/${repo}/issues/${pr_number}/comments`;
       const commentData = await githubRequest<PullRequestComment>(url, {
         method: "POST",
-        body: { body }
+        body: { body: AI_COMMENT_IDENTIFIER + body }
       });
 
       return {
@@ -386,6 +387,54 @@ server.tool(
           {
             type: "text",
             text: `Failed to add comment to pull request: ${error instanceof Error ? error.message : String(error)}`,
+          },
+        ],
+      };
+    }
+  }
+);
+
+server.tool(
+  "add_review_comment",
+  "Add a review comment to a specific line in a GitHub pull request（GitHubのプルリクエストの特定の行にレビューコメントを追加する）",
+  {
+    owner: z.string().describe("Repository owner (username or organization)"),
+    repo: z.string().describe("Repository name"),
+    pr_number: z.number().describe("Pull request number"),
+    body: z.string().describe("Comment content"),
+    commit_id: z.string().describe("The SHA of the commit to comment on"),
+    path: z.string().describe("The relative path to the file to comment on"),
+    line: z.number().describe("The line number in the file to comment on")
+  },
+  async ({ owner, repo, pr_number, body, commit_id, path, line }) => {
+    try {
+      const url = `${GITHUB_API_BASE}/repos/${owner}/${repo}/pulls/${pr_number}/comments`;
+      const commentData = await githubRequest<PullRequestReviewComment>(url, {
+        method: "POST",
+        body: {
+          body: AI_COMMENT_IDENTIFIER + body,
+          commit_id,
+          path,
+          line,
+          side: "RIGHT"  // RIGHTは新しいファイルの方を指します
+        }
+      });
+
+      return {
+        content: [
+          {
+            type: "text",
+            text: `Review comment added successfully to PR #${pr_number}\nFile: ${path} (line ${line})\nComment URL: ${commentData.html_url}`,
+          },
+        ],
+      };
+    } catch (error) {
+      console.error("Error adding review comment to PR:", error);
+      return {
+        content: [
+          {
+            type: "text",
+            text: `Failed to add review comment to pull request: ${error instanceof Error ? error.message : String(error)}`,
           },
         ],
       };
