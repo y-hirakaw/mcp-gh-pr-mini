@@ -98,7 +98,8 @@ Set the environment variable `GITHUB_PERSONAL_ACCESS_TOKEN` if you prefer PAT au
 **Required PAT Permissions:**
 | Permission | Access Level |
 |------------|--------------|
-| **pull requests** | **Read & Write** |
+| **Pull requests** | **Read & Write** |
+| **Issues** | **Read & Write** |
 | Metadata | Read (automatic) |
 
 ### Configure in `settings.json`
@@ -315,9 +316,7 @@ Enable detailed logging by adding debug environment variable:
     "mcp-gh-pr-mini": {
       "command": "npx",
       "args": ["mcp-gh-pr-mini"],
-      "env": {
-        "DEBUG": "true"
-      }
+      "env": {}
     }
   }
 }
