@@ -84,21 +84,22 @@ You can use it with tools like Copilot Agent or any MCP-compatible client.
 - Node.js installed
 - VSCode with an MCP-compatible extension (e.g., Copilot Agent)
 
-### Authentication Setup
+## 🔐 Authentication System
 
-The server supports two authentication methods (automatically detected):
-
-#### Option 1: GitHub CLI (Recommended)
+### Recommended: GitHub CLI Authentication  
 ```bash
-# Install and authenticate with GitHub CLI
-gh auth login
+gh auth login  # One-time setup
+npx mcp-gh-pr-mini  # Works immediately
 ```
 
-#### Option 2: Personal Access Token
-Set the environment variable:
-```bash
-export GITHUB_PERSONAL_ACCESS_TOKEN="your-token-here"
-```
+### Alternative: Personal Access Token
+Set the environment variable `GITHUB_PERSONAL_ACCESS_TOKEN` if you prefer PAT authentication.
+
+**Required PAT Permissions:**
+| Permission | Access Level |
+|------------|--------------|
+| **pull requests** | **Read & Write** |
+| Metadata | Read (automatic) |
 
 ### Configure in `settings.json`
 
