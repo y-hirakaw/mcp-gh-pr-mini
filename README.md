@@ -14,6 +14,17 @@ Creates a new pull request in a GitHub repository.
 - **Returns**: PR number and URL for immediate access
 - **Tested**: ✅ Works with both PAT and GitHub CLI authentication
 
+#### `update_pull_request`
+Updates an existing pull request in a GitHub repository.
+- **Parameters**: owner, repo, pr_number, optional title, body, base, state (open/closed)
+- **Returns**: Updated PR details with confirmation
+- **Features**:
+  - ✅ Update title and description
+  - ✅ Change target branch (base)
+  - ✅ Open or close pull requests
+  - ✅ Partial updates (only specified fields are modified)
+- **Tested**: ✅ Successfully updates PR metadata and state
+
 #### `list_open_pull_requests` 
 Lists all open pull requests in a repository.
 - **Parameters**: owner, repo, optional limit (default: 10)
@@ -178,6 +189,15 @@ create_pull_request({
   body: "Description of the changes",
   head: "feature-branch",
   base: "main"
+})
+
+// 1.5. Update the pull request if needed
+update_pull_request({
+  owner: "username",
+  repo: "repository",
+  pr_number: 1,
+  title: "Add new feature (updated)",
+  body: "Updated description with more details"
 })
 
 // 2. Get the diff to review changes
