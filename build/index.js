@@ -30,7 +30,7 @@ async function initializeAuth() {
     }
 }
 // Register MCP Tools
-server.tool("create_pull_request", "Create a new pull request in a GitHub repository（GitHubリポジトリで新しいプルリクエストを作成する）", {
+server.tool("create_pull_request", "Create a new pull request in a GitHub repository", {
     owner: z.string().describe("Repository owner (username or organization)"),
     repo: z.string().describe("Repository name"),
     title: z.string().describe("Pull request title"),
@@ -40,21 +40,32 @@ server.tool("create_pull_request", "Create a new pull request in a GitHub reposi
 }, async (params) => {
     return await prTools.createPullRequest(params);
 });
-server.tool("list_open_pull_requests", "List open pull requests in a GitHub repository（GitHubリポジトリ内の未クローズのプルリクエストを一覧表示する）", {
+server.tool("update_pull_request", "Update an existing pull request in a GitHub repository", {
+    owner: z.string().describe("Repository owner (username or organization)"),
+    repo: z.string().describe("Repository name"),
+    pr_number: z.number().describe("Pull request number"),
+    title: z.string().optional().describe("New pull request title"),
+    body: z.string().optional().describe("New pull request description"),
+    state: z.enum(["open", "closed"]).optional().describe("Pull request state"),
+    base: z.string().optional().describe("New base branch name")
+}, async (params) => {
+    return await prTools.updatePullRequest(params);
+});
+server.tool("list_open_pull_requests", "List open pull requests in a GitHub repository", {
     owner: z.string().describe("Repository owner (username or organization)"),
     repo: z.string().describe("Repository name"),
     limit: z.number().optional().describe("Maximum number of PRs to return (default: 10)")
 }, async (params) => {
     return await prTools.listOpenPullRequests(params);
 });
-server.tool("get_pull_request_diff", "Get the diff for a GitHub pull request（GitHubのプルリクエストの差分を取得する）", {
+server.tool("get_pull_request_diff", "Get the diff for a GitHub pull request", {
     owner: z.string().describe("Repository owner (username or organization)"),
     repo: z.string().describe("Repository name"),
     pr_number: z.number().describe("Pull request number")
 }, async (params) => {
     return await prTools.getPullRequestDiff(params);
 });
-server.tool("request_reviewers", "Request reviewers for a GitHub pull request（GitHubのプルリクエストにレビュー担当者をリクエストする）", {
+server.tool("request_reviewers", "Request reviewers for a GitHub pull request", {
     owner: z.string().describe("Repository owner (username or organization)"),
     repo: z.string().describe("Repository name"),
     pr_number: z.number().describe("Pull request number"),
@@ -62,7 +73,7 @@ server.tool("request_reviewers", "Request reviewers for a GitHub pull request（
 }, async (params) => {
     return await prTools.requestReviewers(params);
 });
-server.tool("add_pr_comment", "Add a comment to a GitHub pull request（GitHubのプルリクエストにコメントを追加する）", {
+server.tool("add_pr_comment", "Add a comment to a GitHub pull request", {
     owner: z.string().describe("Repository owner (username or organization)"),
     repo: z.string().describe("Repository name"),
     pr_number: z.number().describe("Pull request number"),
@@ -70,7 +81,7 @@ server.tool("add_pr_comment", "Add a comment to a GitHub pull request（GitHub�
 }, async (params) => {
     return await commentTools.addComment(params);
 });
-server.tool("add_review_comment", "Add a review comment to a specific line in a GitHub pull request（GitHubのプルリクエストの特定の行にレビューコメントを追加する）", {
+server.tool("add_review_comment", "Add a review comment to a specific line in a GitHub pull request", {
     owner: z.string().describe("Repository owner (username or organization)"),
     repo: z.string().describe("Repository name"),
     pr_number: z.number().describe("Pull request number"),
@@ -80,14 +91,14 @@ server.tool("add_review_comment", "Add a review comment to a specific line in a 
 }, async (params) => {
     return await commentTools.addReviewComment(params);
 });
-server.tool("get_pr_comments", "Get comments from a GitHub pull request（GitHubのプルリクエストのコメントを取得する）", {
+server.tool("get_pr_comments", "Get comments from a GitHub pull request", {
     owner: z.string().describe("Repository owner (username or organization)"),
     repo: z.string().describe("Repository name"),
     pr_number: z.number().describe("Pull request number")
 }, async (params) => {
     return await commentTools.getComments(params);
 });
-server.tool("get_pr_changes_for_commenting", "Get file changes from a GitHub pull request with positions for commenting（GitHubのプルリクエストのファイル変更とコメント可能な位置を取得する）", {
+server.tool("get_pr_changes_for_commenting", "Get file changes from a GitHub pull request with positions for commenting", {
     owner: z.string().describe("Repository owner (username or organization)"),
     repo: z.string().describe("Repository name"),
     pr_number: z.number().describe("Pull request number")

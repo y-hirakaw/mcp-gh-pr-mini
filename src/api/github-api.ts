@@ -144,6 +144,21 @@ export class GitHubApi {
   }
 
   /**
+   * プルリクエストを更新
+   */
+  async updatePullRequest(owner: string, repo: string, prNumber: number, data: {
+    title?: string;
+    body?: string;
+    state?: 'open' | 'closed';
+    base?: string;
+  }) {
+    return await this.request(`/repos/${owner}/${repo}/pulls/${prNumber}`, {
+      method: 'PATCH',
+      body: data
+    });
+  }
+
+  /**
    * プルリクエストのdiffを取得
    */
   async getPullRequestDiff(owner: string, repo: string, prNumber: number): Promise<string> {

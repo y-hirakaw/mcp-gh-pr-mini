@@ -50,6 +50,23 @@ server.tool(
 );
 
 server.tool(
+  "update_pull_request",
+  "Update an existing pull request in a GitHub repository",
+  {
+    owner: z.string().describe("Repository owner (username or organization)"),
+    repo: z.string().describe("Repository name"),
+    pr_number: z.number().describe("Pull request number"),
+    title: z.string().optional().describe("New pull request title"),
+    body: z.string().optional().describe("New pull request description"),
+    state: z.enum(["open", "closed"]).optional().describe("Pull request state"),
+    base: z.string().optional().describe("New base branch name")
+  },
+  async (params) => {
+    return await prTools.updatePullRequest(params);
+  }
+);
+
+server.tool(
   "list_open_pull_requests",
   "List open pull requests in a GitHub repository",
   {

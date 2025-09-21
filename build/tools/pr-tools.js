@@ -17,6 +17,29 @@ export class PullRequestTools extends BaseTool {
         });
     }
     /**
+     * プルリクエストを更新
+     */
+    async updatePullRequest(params) {
+        return await this.executeOperation('update pull request', async () => {
+            // 更新対象のフィールドのみ送信
+            const updateData = {};
+            if (params.title !== undefined)
+                updateData.title = params.title;
+            if (params.body !== undefined)
+                updateData.body = params.body;
+            if (params.state !== undefined)
+                updateData.state = params.state;
+            if (params.base !== undefined)
+                updateData.base = params.base;
+            if (Object.keys(updateData).length === 0) {
+                return this.createSuccessResponse("No fields specified for update. Please specify at least one field to update (title, body, state, or base).");
+            }
+            const prData = await this.api.updatePullRequest(params.owner, params.repo, params.pr_number, updateData);
+            const updatedFields = Object.keys(updateData).join(', ');
+            return this.createSuccessResponse(`Pull request #${prData.number} updated successfully!\n\nUpdated fields: ${updatedFields}\nTitle: ${prData.title}\nURL: ${prData.html_url}`);
+        });
+    }
+    /**
      * オープンなプルリクエスト一覧を取得
      */
     async listOpenPullRequests(params) {
