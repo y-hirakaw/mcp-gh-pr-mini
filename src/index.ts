@@ -35,7 +35,7 @@ async function initializeAuth() {
 // Register MCP Tools
 server.tool(
   "create_pull_request",
-  "Create a new pull request in a GitHub repository（GitHubリポジトリで新しいプルリクエストを作成する）",
+  "Create a new pull request in a GitHub repository",
   {
     owner: z.string().describe("Repository owner (username or organization)"),
     repo: z.string().describe("Repository name"),
@@ -51,7 +51,7 @@ server.tool(
 
 server.tool(
   "list_open_pull_requests",
-  "List open pull requests in a GitHub repository（GitHubリポジトリ内の未クローズのプルリクエストを一覧表示する）",
+  "List open pull requests in a GitHub repository",
   {
     owner: z.string().describe("Repository owner (username or organization)"),
     repo: z.string().describe("Repository name"),
@@ -64,7 +64,7 @@ server.tool(
 
 server.tool(
   "get_pull_request_diff",
-  "Get the diff for a GitHub pull request（GitHubのプルリクエストの差分を取得する）",
+  "Get the diff for a GitHub pull request",
   {
     owner: z.string().describe("Repository owner (username or organization)"),
     repo: z.string().describe("Repository name"),
@@ -77,7 +77,7 @@ server.tool(
 
 server.tool(
   "request_reviewers",
-  "Request reviewers for a GitHub pull request（GitHubのプルリクエストにレビュー担当者をリクエストする）",
+  "Request reviewers for a GitHub pull request",
   {
     owner: z.string().describe("Repository owner (username or organization)"),
     repo: z.string().describe("Repository name"),
@@ -91,7 +91,7 @@ server.tool(
 
 server.tool(
   "add_pr_comment",
-  "Add a comment to a GitHub pull request（GitHubのプルリクエストにコメントを追加する）",
+  "Add a comment to a GitHub pull request",
   {
     owner: z.string().describe("Repository owner (username or organization)"),
     repo: z.string().describe("Repository name"),
@@ -105,7 +105,7 @@ server.tool(
 
 server.tool(
   "add_review_comment",
-  "Add a review comment to a specific line in a GitHub pull request（GitHubのプルリクエストの特定の行にレビューコメントを追加する）",
+  "Add a review comment to a specific line in a GitHub pull request",
   {
     owner: z.string().describe("Repository owner (username or organization)"),
     repo: z.string().describe("Repository name"),
@@ -121,7 +121,7 @@ server.tool(
 
 server.tool(
   "get_pr_comments",
-  "Get comments from a GitHub pull request（GitHubのプルリクエストのコメントを取得する）",
+  "Get comments from a GitHub pull request",
   {
     owner: z.string().describe("Repository owner (username or organization)"),
     repo: z.string().describe("Repository name"),
@@ -134,7 +134,7 @@ server.tool(
 
 server.tool(
   "get_pr_changes_for_commenting",
-  "Get file changes from a GitHub pull request with positions for commenting（GitHubのプルリクエストのファイル変更とコメント可能な位置を取得する）",
+  "Get file changes from a GitHub pull request with positions for commenting",
   {
     owner: z.string().describe("Repository owner (username or organization)"),
     repo: z.string().describe("Repository name"),
