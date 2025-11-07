@@ -89,6 +89,40 @@ export class PullRequestTools extends BaseTool {
   }
 
   /**
+   * プルリクエストの詳細情報を取得
+   */
+  async getPullRequestDetails(params: {
+    owner: string;
+    repo: string;
+    pr_number: number;
+  }): Promise<ToolResult> {
+    return await this.executeOperation('get pull request details', async () => {
+      const prData = await this.api.getPullRequest(
+        params.owner,
+        params.repo,
+        params.pr_number
+      ) as PullRequest;
+
+      const details = [
+        `# PR #${prData.number}: ${prData.title}`,
+        ``,
+        `**State:** ${prData.state}`,
+        `**Author:** ${prData.user?.login || 'Unknown'}`,
+        `**Base:** ${prData.base?.ref || 'Unknown'} ← **Head:** ${prData.head?.ref || 'Unknown'}`,
+        `**URL:** ${prData.html_url}`,
+        `**Created:** ${prData.created_at}`,
+        `**Updated:** ${prData.updated_at}`,
+        ``,
+        `## Description`,
+        ``,
+        prData.body || '(No description provided)',
+      ].join('\n');
+
+      return this.createSuccessResponse(details);
+    });
+  }
+
+  /**
    * プルリクエストのdiffを取得
    */
   async getPullRequestDiff(params: {

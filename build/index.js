@@ -58,6 +58,13 @@ server.tool("list_open_pull_requests", "List open pull requests in a GitHub repo
 }, async (params) => {
     return await prTools.listOpenPullRequests(params);
 });
+server.tool("get_pull_request", "Get details of a specific GitHub pull request including title and description", {
+    owner: z.string().describe("Repository owner (username or organization)"),
+    repo: z.string().describe("Repository name"),
+    pr_number: z.number().describe("Pull request number")
+}, async (params) => {
+    return await prTools.getPullRequestDetails(params);
+});
 server.tool("get_pull_request_diff", "Get the diff for a GitHub pull request", {
     owner: z.string().describe("Repository owner (username or organization)"),
     repo: z.string().describe("Repository name"),

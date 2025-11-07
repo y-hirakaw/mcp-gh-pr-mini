@@ -2,7 +2,9 @@
 
 A minimal MCP (Model Context Protocol) server for interacting with GitHub pull requests with dual authentication support.
 
-This tool allows you to create, list, view diffs, request reviewers, and comment on pull requests in GitHub repositories via MCP. It supports both Personal Access Token (PAT) and GitHub CLI authentication methods.
+This tool allows you to create, list, view details and diffs, request reviewers, and comment on pull requests in GitHub repositories via MCP. It supports both Personal Access Token (PAT) and GitHub CLI authentication methods.
+
+**Latest Version: 1.3.0** - Added `get_pull_request` tool to retrieve PR details including title and description.
 
 ## ✨ Features
 
@@ -25,11 +27,23 @@ Updates an existing pull request in a GitHub repository.
   - ✅ Partial updates (only specified fields are modified)
 - **Tested**: ✅ Successfully updates PR metadata and state
 
-#### `list_open_pull_requests` 
+#### `list_open_pull_requests`
 Lists all open pull requests in a repository.
 - **Parameters**: owner, repo, optional limit (default: 10)
 - **Returns**: PR numbers, titles, authors, and URLs
 - **Tested**: ✅ Handles repositories with no open PRs gracefully
+
+#### `get_pull_request` 🆕 v1.3.0
+Gets detailed information about a specific pull request.
+- **Parameters**: owner, repo, pr_number
+- **Returns**: PR title, description, state, author, branches, and metadata
+- **Features**:
+  - ✅ Retrieves complete PR details including title and body
+  - ✅ Shows PR state, author, and branch information
+  - ✅ Displays creation and update timestamps
+  - ✅ Provides direct URL to the PR
+- **Use Case**: Similar to `gh pr view {pr_number} --repo {owner/repository} --json title,body`
+- **Tested**: ✅ 17 comprehensive unit tests covering all edge cases
 
 #### `get_pull_request_diff`
 Retrieves the unified diff for a pull request.
@@ -191,7 +205,14 @@ create_pull_request({
   base: "main"
 })
 
-// 1.5. Update the pull request if needed
+// 1.5. Get PR details to review information
+get_pull_request({
+  owner: "username",
+  repo: "repository",
+  pr_number: 1
+})
+
+// 1.6. Update the pull request if needed
 update_pull_request({
   owner: "username",
   repo: "repository",
@@ -351,6 +372,19 @@ If you encounter issues:
 2. **Test with minimal example**: Try listing PRs in a public repository first
 3. **Review debug logs**: Enable debug mode to see detailed error information
 4. **File an issue**: Include debug logs and specific error messages
+
+## 📝 Changelog
+
+### Version 1.3.0 (2025-11-07)
+- ✨ Added `get_pull_request` tool to retrieve detailed PR information (title, body, state, author, branches)
+- 📚 Similar functionality to `gh pr view --json title,body`
+
+### Version 1.2.0
+- Added `update_pull_request` tool for modifying existing PRs
+- Support for partial PR updates (title, body, state, base)
+
+### Version 1.1.0
+- Initial release with core PR management features
 
 ## 🙏 Note
 
