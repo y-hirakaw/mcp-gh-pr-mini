@@ -6,6 +6,7 @@ export interface PullRequest {
   title: string;
   body?: string;
   state: string;
+  draft?: boolean;
   user: {
     login: string;
   };

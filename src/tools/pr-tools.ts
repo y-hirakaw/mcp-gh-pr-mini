@@ -15,17 +15,20 @@ export class PullRequestTools extends BaseTool {
     body: string;
     head: string;
     base: string;
+    draft?: boolean;
   }): Promise<ToolResult> {
     return await this.executeOperation('create pull request', async () => {
       const prData = await this.api.createPullRequest(params.owner, params.repo, {
         title: params.title,
         body: params.body,
         head: params.head,
-        base: params.base
+        base: params.base,
+        draft: params.draft
       }) as PullRequest;
 
+      const draftStatus = prData.draft ? ' (Draft)' : '';
       return this.createSuccessResponse(
-        `Pull request created successfully!\n\nPR #${prData.number}: ${prData.title}\nURL: ${prData.html_url}`
+        `Pull request created successfully!${draftStatus}\n\nPR #${prData.number}: ${prData.title}\nURL: ${prData.html_url}`
       );
     });
   }

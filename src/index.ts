@@ -42,7 +42,8 @@ server.tool(
     title: z.string().describe("Pull request title"),
     body: z.string().describe("Pull request description"),
     head: z.string().describe("Name of the branch where your changes are implemented"),
-    base: z.string().describe("Name of the branch you want the changes pulled into")
+    base: z.string().describe("Name of the branch you want the changes pulled into"),
+    draft: z.boolean().optional().describe("Create as draft pull request (default: false)")
   },
   async (params) => {
     return await prTools.createPullRequest(params);

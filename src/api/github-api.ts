@@ -122,6 +122,7 @@ export class GitHubApi {
     body: string;
     head: string;
     base: string;
+    draft?: boolean;
   }) {
     return await this.request(`/repos/${owner}/${repo}/pulls`, {
       method: 'POST',

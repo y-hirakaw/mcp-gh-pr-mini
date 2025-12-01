@@ -11,9 +11,11 @@ export class PullRequestTools extends BaseTool {
                 title: params.title,
                 body: params.body,
                 head: params.head,
-                base: params.base
+                base: params.base,
+                draft: params.draft
             });
-            return this.createSuccessResponse(`Pull request created successfully!\n\nPR #${prData.number}: ${prData.title}\nURL: ${prData.html_url}`);
+            const draftStatus = prData.draft ? ' (Draft)' : '';
+            return this.createSuccessResponse(`Pull request created successfully!${draftStatus}\n\nPR #${prData.number}: ${prData.title}\nURL: ${prData.html_url}`);
         });
     }
     /**

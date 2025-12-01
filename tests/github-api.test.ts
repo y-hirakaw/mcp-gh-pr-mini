@@ -67,6 +67,7 @@ const mockPullRequest = {
   title: "Test PR",
   body: "This is a test PR",
   state: "open",
+  draft: false,
   user: { login: "testuser" },
   created_at: "2023-01-01T00:00:00Z",
   updated_at: "2023-01-01T00:00:00Z",
@@ -80,6 +81,13 @@ const mockPullRequest = {
     ref: "main",
     label: "owner:main"
   }
+};
+
+const mockDraftPullRequest = {
+  ...mockPullRequest,
+  number: 2,
+  title: "Draft PR",
+  draft: true
 };
 
 function createMockResponse(data: any, status: number = 200, ok: boolean = true): Response {
@@ -145,6 +153,36 @@ describe('GitHub API Functions', () => {
             body: 'Test body',
             head: 'feature',
             base: 'main'
+          })
+        })
+      );
+    });
+
+    it('should handle POST requests with draft flag', async () => {
+      const mockResponse = createMockResponse(mockDraftPullRequest, 201);
+      fetchMock.mockResolvedValueOnce(mockResponse);
+
+      await githubRequest(`${GITHUB_API_BASE}/repos/owner/repo/pulls`, {
+        method: 'POST',
+        body: {
+          title: 'Draft PR',
+          body: 'Test body',
+          head: 'feature',
+          base: 'main',
+          draft: true
+        }
+      });
+
+      expect(fetchMock).toHaveBeenCalledWith(
+        'https://api.github.com/repos/owner/repo/pulls',
+        expect.objectContaining({
+          method: 'POST',
+          body: JSON.stringify({
+            title: 'Draft PR',
+            body: 'Test body',
+            head: 'feature',
+            base: 'main',
+            draft: true
           })
         })
       );
