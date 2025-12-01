@@ -4,7 +4,7 @@ A minimal MCP (Model Context Protocol) server for interacting with GitHub pull r
 
 This tool allows you to create, list, view details and diffs, request reviewers, and comment on pull requests in GitHub repositories via MCP. It supports both Personal Access Token (PAT) and GitHub CLI authentication methods.
 
-**Latest Version: 1.3.0** - Added `get_pull_request` tool to retrieve PR details including title and description.
+**Latest Version: 1.4.0** - Added draft PR creation support with `draft` parameter.
 
 ## ✨ Features
 
@@ -12,8 +12,12 @@ This tool allows you to create, list, view details and diffs, request reviewers,
 
 #### `create_pull_request`
 Creates a new pull request in a GitHub repository.
-- **Parameters**: owner, repo, title, body, head (source branch), base (target branch)
+- **Parameters**: owner, repo, title, body, head (source branch), base (target branch), draft (optional)
 - **Returns**: PR number and URL for immediate access
+- **Features**:
+  - ✅ Create ready-for-review PRs (default)
+  - ✅ Create draft PRs with `draft: true` 🆕 v1.4.0
+  - ✅ Draft status displayed in success message
 - **Tested**: ✅ Works with both PAT and GitHub CLI authentication
 
 #### `update_pull_request`
@@ -205,6 +209,17 @@ create_pull_request({
   base: "main"
 })
 
+// 1a. Create a draft pull request (NEW in v1.4.0)
+create_pull_request({
+  owner: "username",
+  repo: "repository",
+  title: "WIP: Add new feature",
+  body: "Work in progress - not ready for review yet",
+  head: "feature-branch",
+  base: "main",
+  draft: true  // Creates as draft PR
+})
+
 // 1.5. Get PR details to review information
 get_pull_request({
   owner: "username",
@@ -374,6 +389,12 @@ If you encounter issues:
 4. **File an issue**: Include debug logs and specific error messages
 
 ## 📝 Changelog
+
+### Version 1.4.0 (2025-12-01)
+- ✨ Added draft PR creation support with optional `draft` parameter
+- 🎯 Create PRs as draft before implementation is complete
+- 📊 Draft status displayed in success message
+- ✅ Comprehensive test coverage for draft PR functionality
 
 ### Version 1.3.0 (2025-11-07)
 - ✨ Added `get_pull_request` tool to retrieve detailed PR information (title, body, state, author, branches)

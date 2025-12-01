@@ -55,14 +55,16 @@ This is a minimal MCP (Model Context Protocol) server for GitHub pull request op
 - **Modular Design**: Clean separation of concerns with dependency injection
 
 ### MCP Tools Provided
-1. `create_pull_request` - Create new pull requests
-2. `list_open_pull_requests` - List open PRs with metadata
-3. `get_pull_request_diff` - Get PR diffs in unified format
-4. `request_reviewers` - Add reviewers to existing PRs
-5. `add_pr_comment` - Add general comments to PRs
-6. `add_review_comment` - Add position-specific code review comments
-7. `get_pr_comments` - Retrieve all comments (both conversation and review)
-8. `get_pr_changes_for_commenting` - Get file changes with commentable positions
+1. `create_pull_request` - Create new pull requests (supports draft PRs with `draft: true`)
+2. `update_pull_request` - Update existing pull requests (title, body, state, base)
+3. `list_open_pull_requests` - List open PRs with metadata
+4. `get_pull_request` - Get detailed PR information (title, body, state, author, branches)
+5. `get_pull_request_diff` - Get PR diffs in unified format
+6. `request_reviewers` - Add reviewers to existing PRs
+7. `add_pr_comment` - Add general comments to PRs
+8. `add_review_comment` - Add position-specific code review comments
+9. `get_pr_comments` - Retrieve all comments (both conversation and review)
+10. `get_pr_changes_for_commenting` - Get file changes with commentable positions
 
 ### Key Implementation Details
 
@@ -79,16 +81,18 @@ This is a minimal MCP (Model Context Protocol) server for GitHub pull request op
 - **Diff Support**: Special handling for GitHub diff API with proper content-type headers
 - **Error Standardization**: Consistent error handling across authentication methods
 
-#### Tool Features  
+#### Tool Features
 - **Base Tool Class**: Common functionality shared across all tools via inheritance
 - **Consistent Response Format**: Standardized success/error response patterns
 - **Operation Logging**: Detailed logging of all tool operations
 - **AI Comment Identification**: All AI-generated comments prefixed with `[AI] Generated using MCP` identifier
 - **Position-specific Comments**: Support for both general PR comments and code review comments
+- **Draft PR Support**: Create draft PRs with optional `draft: true` parameter (v1.4.0)
 
 ### Testing
-- `tests/github-api.test.ts` - GitHub API function unit tests (11 tests)
-- `tests/comment-position.test.ts` - Comment position calculation tests (13 tests) 
+- `tests/github-api.test.ts` - GitHub API function unit tests (12 tests, including draft PR)
+- `tests/comment-position.test.ts` - Comment position calculation tests (13 tests)
+- `tests/get-pull-request.test.ts` - PR retrieval tests (17 tests)
 - `tests/basic.test.ts` - Basic environment and setup tests (3 tests)
 - All core functionality is covered by unit tests for reliable refactoring
 
