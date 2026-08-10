@@ -227,7 +227,12 @@ export class GitHubApi {
     body: string;
     commit_id: string;
     path: string;
-    position: number;
+    position?: number;
+    line?: number;
+    side?: 'LEFT' | 'RIGHT';
+    start_line?: number;
+    start_side?: 'LEFT' | 'RIGHT';
+    subject_type?: 'line' | 'file';
   }) {
     return await this.request(`/repos/${owner}/${repo}/pulls/${prNumber}/comments`, {
       method: 'POST',

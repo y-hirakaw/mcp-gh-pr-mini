@@ -89,13 +89,18 @@ server.tool("add_pr_comment", "Add a comment to a GitHub pull request", {
 }, async (params) => {
     return await commentTools.addComment(params);
 });
-server.tool("add_review_comment", "Add a review comment to a specific line in a GitHub pull request", {
+server.tool("add_review_comment", "Add a review comment to a specific line in a GitHub pull request. Prefer 'line' (the actual file line number) over the deprecated 'position' (an offset within the diff), since 'position' requires re-counting diff hunks and is error-prone.", {
     owner: z.string().describe("Repository owner (username or organization)"),
     repo: z.string().describe("Repository name"),
     pr_number: z.number().describe("Pull request number"),
     body: z.string().describe("Comment content"),
     path: z.string().describe("The relative path to the file to comment on"),
-    position: z.number().describe("The position in the diff where you want to add a comment")
+    line: z.number().optional().describe("The file line number to comment on (preferred). Mutually exclusive with 'position'."),
+    side: z.enum(["LEFT", "RIGHT"]).optional().describe("Which side of the diff 'line' refers to: LEFT (deletion/old) or RIGHT (addition/new). Defaults to RIGHT."),
+    start_line: z.number().optional().describe("For a multi-line comment, the first line of the range. Must be used together with 'line', which is the last line of the range."),
+    start_side: z.enum(["LEFT", "RIGHT"]).optional().describe("Which side of the diff 'start_line' refers to. Defaults to the same value as 'side'."),
+    subject_type: z.enum(["line", "file"]).optional().describe("Set to 'file' to add a file-level comment when the target line falls outside the diff hunk (position/line are omitted in this case)."),
+    position: z.number().optional().describe("[Deprecated] The position in the diff where you want to add a comment. Prefer 'line' instead.")
 }, async (params) => {
     return await commentTools.addReviewComment(params);
 });

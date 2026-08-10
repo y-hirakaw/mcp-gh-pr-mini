@@ -70,10 +70,13 @@ Adds a general comment to a pull request conversation.
   - ✅ Tested with both authentication methods
 
 #### `add_review_comment`
-Adds a position-specific code review comment to changed lines.
-- **Parameters**: owner, repo, pr_number, body, path (file path), position
+Adds a code review comment to a specific line (or the diff position) in a changed file.
+- **Parameters**: owner, repo, pr_number, body, path (file path), and one of:
+  - `line` (preferred): the file line number, plus optional `side` (`LEFT`/`RIGHT`, default `RIGHT`), and `start_line`/`start_side` for multi-line comments
+  - `position` (deprecated): the offset within the diff — kept for backward compatibility
+  - `subject_type: "file"`: for a file-level comment when the target line falls outside the diff hunk (omits line/position)
 - **Returns**: Review comment ID and URL
-- **Tested**: ✅ Successfully adds inline code comments at specific positions
+- **Tested**: ✅ Successfully adds inline code comments via line number, diff position, and file-level comments
 
 #### `get_pr_comments`
 Retrieves all comments from a pull request.
@@ -251,14 +254,14 @@ add_pr_comment({
   body: "This looks great! Just a few small suggestions."
 })
 
-// 4. Add a specific code review comment
+// 4. Add a specific code review comment (line is preferred over position)
 add_review_comment({
   owner: "username",
   repo: "repository",
   pr_number: 1,
   body: "Consider using const instead of let here for immutability.",
   path: "src/index.ts",
-  position: 15
+  line: 42
 })
 
 // 5. Request reviewers
@@ -307,7 +310,8 @@ list_open_pull_requests({
 
 ### Comment Management
 - **AI Identification**: All AI-generated comments are automatically prefixed with "[AI] Generated using MCP"
-- **Position-specific comments**: Use `get_pr_changes_for_commenting` first to find valid positions
+- **Line-specific comments**: Prefer `line` (the actual file line number) over the deprecated `position` (a diff offset) — it avoids having to re-count diff hunks
+- **Fallback for out-of-hunk lines**: If a line falls outside the diff hunk, use `subject_type: "file"` for a file-level comment instead
 - **Review workflow**: Get diff → identify issues → add targeted review comments
 
 ### Error Handling
@@ -346,10 +350,10 @@ The server uses this fallback order:
 
 ### Common Issues
 
-#### "Invalid position for review comment"
-- Use `get_pr_changes_for_commenting` first to find valid positions
-- Position numbers correspond to lines in the diff, not the original file
-- Only modified or added lines can receive review comments
+#### "Invalid position/line for review comment" (HTTP 422)
+- The specified `line` (or `position`) is likely outside the diff hunk range — only modified or added lines (plus a few lines of surrounding context) can receive line-level review comments
+- Retry with `subject_type: "file"` for a file-level comment instead
+- `get_pr_changes_for_commenting` can still be used to inspect the patch and find valid diff positions if you need the deprecated `position` parameter
 
 #### "Pull request not found"
 - Verify the PR number exists and is accessible
